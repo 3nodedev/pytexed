@@ -8,6 +8,29 @@ root = tk.Tk()
 root.title(PROGRAM_NAME)
 root.geometry('400x400')
 
+# Text Widget Functionality
+
+def cut():
+    content_text.event_generate("<<Cut>>")
+    return "break"
+
+def copy():
+    content_text.event_generate("<<Copy>>")
+    return "break"
+
+def paste():
+    content_text.event_generate("<<Paste>>")
+    return "break"
+
+def undo():
+    content_text.event_generate("<<Undo>>")
+    return "break"
+
+def redo(event=None):
+    content_text.event_generate("<<Redo>>")
+    return "break"
+
+
 # Menu Items
 new_file_icon = tk.PhotoImage(file='gif/New_File.gif')
 open_file_icon = tk.PhotoImage(file='gif/Folder.gif')
@@ -35,12 +58,12 @@ file_menu.add_command(label='Exit', accelerator='(Alt+F4)', compound='left', ima
 menu_bar.add_cascade(label='File', menu=file_menu)
 
 edit_menu = tk.Menu(menu_bar, tearoff=0)
-edit_menu.add_command(label='Undo', accelerator='(Ctrl+Z)', compound='left', image=undo_icon)
-edit_menu.add_command(label='Redo', accelerator='(Ctrl+Y)', compound='left', image=redo_icon)
+edit_menu.add_command(label='Undo', accelerator='(Ctrl+Z)', compound='left', image=undo_icon, command=undo)
+edit_menu.add_command(label='Redo', accelerator='(Ctrl+Y)', compound='left', image=redo_icon, command=redo)
 edit_menu.add_separator()
-edit_menu.add_command(label='Cut', accelerator='(Ctrl+X)', compound='left', image=cut_icon)
-edit_menu.add_command(label='Copy', accelerator='(Ctrl+C)', compound='left', image=copy_icon)
-edit_menu.add_command(label='Paste', accelerator='(Ctrl+V)', compound='left', image=paste_icon)
+edit_menu.add_command(label='Cut', accelerator='(Ctrl+X)', compound='left', image=cut_icon, command=cut)
+edit_menu.add_command(label='Copy', accelerator='(Ctrl+C)', compound='left', image=copy_icon, command=copy)
+edit_menu.add_command(label='Paste', accelerator='(Ctrl+V)', compound='left', image=paste_icon, command=paste)
 edit_menu.add_separator()
 edit_menu.add_command(label='Find', accelerator='(Ctrl+F)', compound='left', image=search_icon)
 edit_menu.add_separator()
@@ -64,6 +87,7 @@ about_menu = tk.Menu(menu_bar, tearoff=0)
 about_menu.add_command(label='About', compound='left', image=about_icon, underline=0)
 about_menu.add_command(label='Help', compound='left', image=help_icon, underline=0)
 menu_bar.add_cascade(label='About', menu=about_menu)
+root.config(menu=menu_bar)
 
 # Top and line number bars
 shortcut_bar = tk.Frame(root, height=25, background='light blue')
@@ -73,12 +97,16 @@ line_number_bar = tk.Text(root, width=4, padx=3, takefocus=0, border=0, backgrou
 line_number_bar.pack(side='left', fill='y')
 
 # Main Text adn Scrollbar widgets
-content_text = tk.Text(root, wrap='word')
+content_text = tk.Text(root, wrap='word', undo=1)
 content_text.pack(expand='yes', fill='both')
 scroll_bar = tk.Scrollbar(content_text)
 content_text.configure(yscrollcommand=scroll_bar.set)
 scroll_bar.config(command=content_text.yview)
 scroll_bar.pack(side='right', fill='y')
-root.config(menu=menu_bar)
+
+
+# Redo binding issue
+content_text.bind('<Control-y>', redo)
+content_text.bind('<Control-y>', redo)
 
 root.mainloop()
