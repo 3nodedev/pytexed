@@ -8,8 +8,12 @@ root = tk.Tk()
 root.title(PROGRAM_NAME)
 root.geometry('400x400')
 
-# Text Widget Functionality
+# Select All Functionality
+def select_all(event=None):
+    content_text.tag_add('sel', '1.0', 'end')
+    return "break"
 
+# Text Widget Functionality
 def cut():
     content_text.event_generate("<<Cut>>")
     return "break"
@@ -75,7 +79,8 @@ edit_menu.add_separator()
 edit_menu.add_command(label='Find', accelerator='Ctrl+F', compound='left',
                       image=search_icon)
 edit_menu.add_separator()
-edit_menu.add_command(label='Select All', accelerator='Ctrl+A', underline=7)
+edit_menu.add_command(label='Select All', accelerator='Ctrl+A', underline=7,
+                      command=select_all)
 menu_bar.add_cascade(label='Edit', menu=edit_menu)
 
 view_menu = tk.Menu(menu_bar, tearoff=0)
@@ -134,5 +139,7 @@ scroll_bar.pack(side='right', fill='y')
 # Redo binding issue
 content_text.bind('<Control-y>', redo)
 content_text.bind('<Control-y>', redo)
+content_text.bind('<Control-A>', select_all)
+content_text.bind('<Control-a>', select_all)
 
 root.mainloop()
