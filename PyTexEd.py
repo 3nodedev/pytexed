@@ -12,6 +12,41 @@ root = tk.Tk()
 root.title(PROGRAM_NAME)
 root.geometry('400x400')
 
+# Line numbers
+def update_line_numbers(event=None):
+    line_numbers = get_line_numbers()
+    line_number_bar.config(state='normal')
+    line_number_bar.delete('1.0', 'end')
+    line_number_bar.insert('1.0', line_numbers)
+    line_number_bar.config(state='disabled')
+
+def hightlight_line(interval=100):
+    content_text.tag_remove('active_line', 1.0, 'end')
+    content_text.tag_add(
+        'active_line', 'insert linestart', 'insert lineend+lc'
+    )
+    content_text.after(interval, toggle_hightlight)
+
+def undo_highlight():
+    content_text.tag_remove('active_line', 1.0, 'end')
+
+def toggle_hightlight(event=None):
+    if to_hightlight_line.get():
+        highlight_line()
+    else:
+        undo_highlight()
+
+def on_content_changed(event=None):
+    update_line_numbers()
+
+def get_line_numbers():
+    output = ''
+    if show_line_number.get():
+        row, col = content_text.index('end').split('.')
+        for i in range(1, int(row)):
+            output += str(i) + '\n'
+    return output
+
 # MessageBox Functionality
 def display_about_messagebox(event=None):
     tkinter.messagebox.showinfo(
@@ -127,6 +162,7 @@ def search_output(needle, if_ignore_case, content_text, search_toplevel, search_
 # Text Widget Functionality
 def cut():
     content_text.event_generate("<<Cut>>")
+    on_content_changed()
     return "break"
 
 def copy():
@@ -135,14 +171,17 @@ def copy():
 
 def paste():
     content_text.event_generate("<<Paste>>")
+    on_content_changed()
     return "break"
 
 def undo():
     content_text.event_generate("<<Undo>>")
+    on_content_changed()
     return "break"
 
 def redo(event=None):
     content_text.event_generate("<<Redo>>")
+    on_content_changed()
     return "break"
 
 
@@ -247,7 +286,7 @@ for i, icon in enumerate(icons):
     tool_bar.pack(side='left')
 
 line_number_bar = tk.Text(root, width=4, padx=3, takefocus=0, border=0,
-                          background='blue', state='disabled', wrap='none')
+                          background='light blue', state='disabled', wrap='none')
 line_number_bar.pack(side='left', fill='y')
 
 # Main Text and Scrollbar widgets
@@ -273,6 +312,8 @@ content_text.bind('<Control-A>', select_all)
 content_text.bind('<Control-a>', select_all)
 content_text.bind('<Control-f>', find_text)
 content_text.bind('<Control-F>', find_text)
+content_text.bind('<Any-KeyPress>', on_content_changed)
+content_text.tag_configure('active_line', background='ivory2')
 
 root.protocol('WM_DELETE_WINDOW', exit_editor)
 root.mainloop()
