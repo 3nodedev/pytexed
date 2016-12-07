@@ -2,6 +2,7 @@
 
 import os
 import tkinter as tk
+import tkinter.filedialog
 
 PROGRAM_NAME = "Python Text Editor (PyTexEd)"
 file_name = None
@@ -16,6 +17,19 @@ def new_file(event=None):
     global file_name
     file_name = None
     content_text.delete(1.0, 'end')
+
+# File Open dialog functionality
+def open_file(event=None):
+    input_file_name = tkinter.filedialog.askopenfilename(defaultextension=".txt",
+                                                    filetypes=[("All Files", "*.*"),
+                                                               ("Text Documents", "*.txt")])
+    if input_file_name:
+        global file_name
+        file_name = input_file_name
+        root.title('{} - {}'.format(os.path.basename(file_name), PROGRAM_NAME))
+        content_text.delete(1.0, 'end')
+        with open(file_name) as _file:
+            content_text.insert(1.0, _file.read())
 
 # Select All Functionality
 def select_all(event=None):
@@ -106,7 +120,7 @@ file_menu = tk.Menu(menu_bar, tearoff=0)
 file_menu.add_command(label='New', accelerator='Ctrl+N', compound='left',
                       image=new_file_icon, underline=0, command=new_file)
 file_menu.add_command(label='Open', accelerator='Ctrl+O', compound='left',
-                      image=open_file_icon, underline=0)
+                      image=open_file_icon, underline=0, command=open_file)
 file_menu.add_command(label='Save', accelerator='Ctrl+S', compound='left',
                       image=save_file_icon, underline=0)
 file_menu.add_command(label='Save as', accelerator='Shift+Ctrl+S')
@@ -191,6 +205,8 @@ scroll_bar.pack(side='right', fill='y')
 # binding issues
 content_text.bind('<Control-N>', new_file)
 content_text.bind('<Control-n>', new_file)
+content_text.bind('<Control-O>', open_file)
+content_text.bind('<Control-o>', open_file)
 content_text.bind('<Control-y>', redo)
 content_text.bind('<Control-Y>', redo)
 content_text.bind('<Control-A>', select_all)
