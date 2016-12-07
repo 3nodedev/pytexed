@@ -31,6 +31,34 @@ def open_file(event=None):
         with open(file_name) as _file:
             content_text.insert(1.0, _file.read())
 
+# File Save Functionality
+def write_to_file(file_name):
+    try:
+        content = content_text.get(1.0, 'end')
+        with open(file_name, 'w') as the_file:
+            the_file.write(content)
+    except IOError:
+        pass
+
+def save_as(event=None):
+    input_file_name = tkinter.filedialog.asksaveasfilename(defaultextension=".txt",
+                                                           filetypes=[("All Files", "*.*"),
+                                                                      ("Text Documents", "*.txt")])
+    if input_file_name:
+        global file_name
+        file_name = input_file_name
+        write_to_file(file_name)
+        root.title('{} - {}'.format(os.path.basename(file_name), PROGRAM_NAME))
+    return "break"
+
+def save_file(event=None):
+    global file_name
+    if not file_name:
+        save_as()
+    else:
+        write_to_file(file_name)
+    return "break"
+
 # Select All Functionality
 def select_all(event=None):
     content_text.tag_add('sel', '1.0', 'end')
@@ -122,8 +150,8 @@ file_menu.add_command(label='New', accelerator='Ctrl+N', compound='left',
 file_menu.add_command(label='Open', accelerator='Ctrl+O', compound='left',
                       image=open_file_icon, underline=0, command=open_file)
 file_menu.add_command(label='Save', accelerator='Ctrl+S', compound='left',
-                      image=save_file_icon, underline=0)
-file_menu.add_command(label='Save as', accelerator='Shift+Ctrl+S')
+                      image=save_file_icon, underline=0, command=save_file)
+file_menu.add_command(label='Save as', accelerator='Shift+Ctrl+S', command=save_as)
 file_menu.add_separator()
 file_menu.add_command(label='Exit', accelerator='Alt+F4', compound='left',
                       image=exit_icon, underline=0)
@@ -207,6 +235,8 @@ content_text.bind('<Control-N>', new_file)
 content_text.bind('<Control-n>', new_file)
 content_text.bind('<Control-O>', open_file)
 content_text.bind('<Control-o>', open_file)
+content_text.bind('<Control-S>', save_file)
+content_text.bind('<Control-s>', save_file)
 content_text.bind('<Control-y>', redo)
 content_text.bind('<Control-Y>', redo)
 content_text.bind('<Control-A>', select_all)
