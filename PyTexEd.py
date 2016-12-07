@@ -12,6 +12,9 @@ root = tk.Tk()
 root.title(PROGRAM_NAME)
 root.geometry('400x400')
 
+def show_popup_menu(event):
+    popup_menu.tk_popup(event.x_root, event.y_root)
+
 # Cursor Info
 def show_cursor_info_bar():
     show_cursor_info_checked = show_cursor_info.get()
@@ -337,6 +340,16 @@ content_text.bind('<Control-f>', find_text)
 content_text.bind('<Control-F>', find_text)
 content_text.bind('<Any-KeyPress>', on_content_changed)
 content_text.tag_configure('active_line', background='ivory2')
+
+# Context Menu
+popup_menu = tk.Menu(content_text)
+for i in ('cut', 'copy', 'paste', 'undo', 'redo'):
+    cmd = eval(i)
+    popup_menu.add_command(label=i, compound='left', command=cmd)
+popup_menu.add_separator()
+popup_menu.add_command(label='Select All', underline=7, command=select_all)
+content_text.bind('<Button-3>', show_popup_menu)
+content_text.focus_set()
 
 root.protocol('WM_DELETE_WINDOW', exit_editor)
 root.mainloop()
