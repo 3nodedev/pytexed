@@ -3,6 +3,7 @@
 import os
 import tkinter as tk
 import tkinter.filedialog
+import tkinter.messagebox
 
 PROGRAM_NAME = "Python Text Editor (PyTexEd)"
 file_name = None
@@ -10,6 +11,22 @@ file_name = None
 root = tk.Tk()
 root.title(PROGRAM_NAME)
 root.geometry('400x400')
+
+# MessageBox Functionality
+def display_about_messagebox(event=None):
+    tkinter.messagebox.showinfo(
+        "About", PROGRAM_NAME + "\nPython Text Editor\nTesting TKinter"
+    )
+
+def display_help_messagebox(event=None):
+    tkinter.messagebox.showinfo(
+        "Help", "Help information: \nPython Text Editor\nTesting TKinter",
+        icon='question'
+    )
+
+def exit_editor(event=None):
+    if tkinter.messagebox.askokcancel("Quit?", "Really quit?"):
+        root.destroy()
 
 # New File Functionality
 def new_file(event=None):
@@ -154,7 +171,7 @@ file_menu.add_command(label='Save', accelerator='Ctrl+S', compound='left',
 file_menu.add_command(label='Save as', accelerator='Shift+Ctrl+S', command=save_as)
 file_menu.add_separator()
 file_menu.add_command(label='Exit', accelerator='Alt+F4', compound='left',
-                      image=exit_icon, underline=0)
+                      image=exit_icon, underline=0, command=exit_editor)
 menu_bar.add_cascade(label='File', menu=file_menu)
 
 edit_menu = tk.Menu(menu_bar, tearoff=0)
@@ -208,8 +225,10 @@ for k in sorted(color_schemes):
 menu_bar.add_cascade(label='View', menu=view_menu)
 
 about_menu = tk.Menu(menu_bar, tearoff=0)
-about_menu.add_command(label='About', compound='left', image=about_icon, underline=0)
-about_menu.add_command(label='Help', compound='left', image=help_icon, underline=0)
+about_menu.add_command(label='About', compound='left', image=about_icon,
+                       underline=0, command=display_about_messagebox)
+about_menu.add_command(label='Help', compound='left', image=help_icon,
+                       underline=0, command=display_help_messagebox)
 menu_bar.add_cascade(label='About', menu=about_menu)
 root.config(menu=menu_bar)
 
@@ -231,6 +250,7 @@ scroll_bar.pack(side='right', fill='y')
 
 
 # binding issues
+content_text.bind('<KeyPress-F1>', display_help_messagebox)
 content_text.bind('<Control-N>', new_file)
 content_text.bind('<Control-n>', new_file)
 content_text.bind('<Control-O>', open_file)
