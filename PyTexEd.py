@@ -68,7 +68,7 @@ def save_as(event=None):
         root.title('{} - {}'.format(os.path.basename(file_name), PROGRAM_NAME))
     return "break"
 
-def save_file(event=None):
+def save(event=None):
     global file_name
     if not file_name:
         save_as()
@@ -89,7 +89,7 @@ def find_text(event=None):
     search_toplevel.resizable(False, False)
     tk.Label(search_toplevel, text="Find All:").grid(row=0, column=0, sticky='e')
     search_entry_widget = tk.Entry(search_toplevel, width=25)
-    search_entry_widget.grid(row=0, column=2, padx=2, pady=2, sticky='we')
+    search_entry_widget.grid(row=0, column=1, padx=2, pady=2, sticky='we')
     search_entry_widget.focus_set()
     ignore_case_value = tk.IntVar()
     tk.Checkbutton(search_toplevel, text='Ignore Case',
@@ -147,18 +147,18 @@ def redo(event=None):
 
 
 # Menu Items
-new_file_icon = tk.PhotoImage(file='gif/New_File.gif')
-open_file_icon = tk.PhotoImage(file='gif/Folder.gif')
-save_file_icon = tk.PhotoImage(file='gif/Save.gif')
-exit_icon = tk.PhotoImage(file='gif/Exit.gif')
-undo_icon = tk.PhotoImage(file='gif/Undo.gif')
-redo_icon = tk.PhotoImage(file='gif/Redo.gif')
-cut_icon = tk.PhotoImage(file='gif/Cut.gif')
-copy_icon = tk.PhotoImage(file='gif/Copy.gif')
-paste_icon = tk.PhotoImage(file='gif/Paste.gif')
-search_icon = tk.PhotoImage(file='gif/Search.gif')
-about_icon = tk.PhotoImage(file='gif/About.gif')
-help_icon = tk.PhotoImage(file='gif/Help.gif')
+new_file_icon = tk.PhotoImage(file='gif/new_file.gif')
+open_file_icon = tk.PhotoImage(file='gif/open_file.gif')
+save_file_icon = tk.PhotoImage(file='gif/save.gif')
+exit_icon = tk.PhotoImage(file='gif/exit.gif')
+undo_icon = tk.PhotoImage(file='gif/undo.gif')
+redo_icon = tk.PhotoImage(file='gif/redo.gif')
+cut_icon = tk.PhotoImage(file='gif/cut.gif')
+copy_icon = tk.PhotoImage(file='gif/copy.gif')
+paste_icon = tk.PhotoImage(file='gif/paste.gif')
+search_icon = tk.PhotoImage(file='gif/find_text.gif')
+about_icon = tk.PhotoImage(file='gif/about.gif')
+help_icon = tk.PhotoImage(file='gif/help.gif')
 
 menu_bar = tk.Menu(root)
 file_menu = tk.Menu(menu_bar, tearoff=0)
@@ -167,7 +167,7 @@ file_menu.add_command(label='New', accelerator='Ctrl+N', compound='left',
 file_menu.add_command(label='Open', accelerator='Ctrl+O', compound='left',
                       image=open_file_icon, underline=0, command=open_file)
 file_menu.add_command(label='Save', accelerator='Ctrl+S', compound='left',
-                      image=save_file_icon, underline=0, command=save_file)
+                      image=save_file_icon, underline=0, command=save)
 file_menu.add_command(label='Save as', accelerator='Shift+Ctrl+S', command=save_as)
 file_menu.add_separator()
 file_menu.add_command(label='Exit', accelerator='Alt+F4', compound='left',
@@ -236,6 +236,16 @@ root.config(menu=menu_bar)
 shortcut_bar = tk.Frame(root, height=25, background='light blue')
 shortcut_bar.pack(expand='no', fill='x')
 
+# Shortcut Icons
+icons = ('new_file', 'open_file', 'save', 'cut', 'copy', 'paste', 'undo',
+         'redo', 'find_text')
+for i, icon in enumerate(icons):
+    tool_bar_icon = tk.PhotoImage(file='gif/{}.gif'.format(icon))
+    cmd = eval(icon)
+    tool_bar = tk.Button(shortcut_bar, image=tool_bar_icon, command=cmd)
+    tool_bar.image = tool_bar_icon
+    tool_bar.pack(side='left')
+
 line_number_bar = tk.Text(root, width=4, padx=3, takefocus=0, border=0,
                           background='blue', state='disabled', wrap='none')
 line_number_bar.pack(side='left', fill='y')
@@ -255,8 +265,8 @@ content_text.bind('<Control-N>', new_file)
 content_text.bind('<Control-n>', new_file)
 content_text.bind('<Control-O>', open_file)
 content_text.bind('<Control-o>', open_file)
-content_text.bind('<Control-S>', save_file)
-content_text.bind('<Control-s>', save_file)
+content_text.bind('<Control-S>', save)
+content_text.bind('<Control-s>', save)
 content_text.bind('<Control-y>', redo)
 content_text.bind('<Control-Y>', redo)
 content_text.bind('<Control-A>', select_all)
@@ -264,4 +274,5 @@ content_text.bind('<Control-a>', select_all)
 content_text.bind('<Control-f>', find_text)
 content_text.bind('<Control-F>', find_text)
 
+root.protocol('WM_DELETE_WINDOW', exit_editor)
 root.mainloop()
