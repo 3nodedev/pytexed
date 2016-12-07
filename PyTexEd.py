@@ -131,6 +131,12 @@ def select_all(event=None):
     content_text.tag_add('sel', '1.0', 'end')
     return "break"
 
+def change_theme(event=None):
+    selected_theme = theme_choice.get()
+    fg_bg_colors = color_schemes.get(selected_theme)
+    foreground_color, background_color = fg_bg_colors.split('.')
+    content_text.config(background=background_color, fg=foreground_color)
+
 # Find text Functionality
 def find_text(event=None):
     search_toplevel = tk.Toplevel(root)
@@ -275,7 +281,7 @@ color_schemes = {
 theme_choice = tk.StringVar()
 theme_choice.set('Default')
 for k in sorted(color_schemes):
-    themes_menu.add_radiobutton(label=k, variable=theme_choice)
+    themes_menu.add_radiobutton(label=k, variable=theme_choice, command=change_theme)
 menu_bar.add_cascade(label='View', menu=view_menu)
 
 about_menu = tk.Menu(menu_bar, tearoff=0)
@@ -287,7 +293,7 @@ menu_bar.add_cascade(label='About', menu=about_menu)
 root.config(menu=menu_bar)
 
 # Top and line number bars
-shortcut_bar = tk.Frame(root, height=25, background='light blue')
+shortcut_bar = tk.Frame(root, height=45, background='#CCCCCC')
 shortcut_bar.pack(expand='no', fill='x')
 
 # Shortcut Icons
@@ -301,7 +307,7 @@ for i, icon in enumerate(icons):
     tool_bar.pack(side='left')
 
 line_number_bar = tk.Text(root, width=4, padx=3, takefocus=0, border=0,
-                          background='light blue', state='disabled', wrap='none')
+                          background='#E6C690', state='disabled', wrap='none')
 line_number_bar.pack(side='left', fill='y')
 
 # Main Text and Scrollbar widgets
