@@ -1,12 +1,21 @@
 #!/usr/bin/env python3
 
+import os
 import tkinter as tk
 
 PROGRAM_NAME = "Python Text Editor (PyTexEd)"
+file_name = None
 
 root = tk.Tk()
 root.title(PROGRAM_NAME)
 root.geometry('400x400')
+
+# New File Functionality
+def new_file(event=None):
+    root.title("Untitled")
+    global file_name
+    file_name = None
+    content_text.delete(1.0, 'end')
 
 # Select All Functionality
 def select_all(event=None):
@@ -21,7 +30,7 @@ def find_text(event=None):
     search_toplevel.resizable(False, False)
     tk.Label(search_toplevel, text="Find All:").grid(row=0, column=0, sticky='e')
     search_entry_widget = tk.Entry(search_toplevel, width=25)
-    search_entry_widget.grid(row=0, column=1, padx=2, pady=2, sticky='we')
+    search_entry_widget.grid(row=0, column=2, padx=2, pady=2, sticky='we')
     search_entry_widget.focus_set()
     ignore_case_value = tk.IntVar()
     tk.Checkbutton(search_toplevel, text='Ignore Case',
@@ -95,7 +104,7 @@ help_icon = tk.PhotoImage(file='gif/Help.gif')
 menu_bar = tk.Menu(root)
 file_menu = tk.Menu(menu_bar, tearoff=0)
 file_menu.add_command(label='New', accelerator='Ctrl+N', compound='left',
-                      image=new_file_icon, underline=0)
+                      image=new_file_icon, underline=0, command=new_file)
 file_menu.add_command(label='Open', accelerator='Ctrl+O', compound='left',
                       image=open_file_icon, underline=0)
 file_menu.add_command(label='Save', accelerator='Ctrl+S', compound='left',
@@ -179,7 +188,9 @@ scroll_bar.config(command=content_text.yview)
 scroll_bar.pack(side='right', fill='y')
 
 
-# Redo binding issue
+# binding issues
+content_text.bind('<Control-N>', new_file)
+content_text.bind('<Control-n>', new_file)
 content_text.bind('<Control-y>', redo)
 content_text.bind('<Control-Y>', redo)
 content_text.bind('<Control-A>', select_all)
