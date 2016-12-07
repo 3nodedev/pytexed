@@ -34,18 +34,18 @@ def update_line_numbers(event=None):
     line_number_bar.insert('1.0', line_numbers)
     line_number_bar.config(state='disabled')
 
-def hightlight_line(interval=100):
+def highlight_line(interval=100):
     content_text.tag_remove('active_line', 1.0, 'end')
     content_text.tag_add(
-        'active_line', 'insert linestart', 'insert lineend+lc'
+        'active_line', 'insert linestart', 'insert lineend+1c'
     )
-    content_text.after(interval, toggle_hightlight)
+    content_text.after(interval, toggle_highlight)
 
 def undo_highlight():
     content_text.tag_remove('active_line', 1.0, 'end')
 
-def toggle_hightlight(event=None):
-    if to_hightlight_line.get():
+def toggle_highlight(event=None):
+    if to_highlight_line.get():
         highlight_line()
     else:
         undo_highlight()
@@ -256,9 +256,9 @@ show_cursor_info = tk.IntVar()
 show_cursor_info.set(1)
 view_menu.add_checkbutton(label='Show Cursor Location at Bottom',
                           variable=show_cursor_info, command=show_cursor_info_bar)
-highlight_line = tk.IntVar()
+to_highlight_line = tk.BooleanVar()
 view_menu.add_checkbutton(label='Highlight Current Line', onvalue=1, offvalue=0,
-                          variable=highlight_line)
+                          variable=to_highlight_line, command=toggle_highlight)
 themes_menu = tk.Menu(menu_bar, tearoff=0)
 view_menu.add_cascade(label='Themes', menu=themes_menu)
 
