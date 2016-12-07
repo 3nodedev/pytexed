@@ -12,6 +12,20 @@ root = tk.Tk()
 root.title(PROGRAM_NAME)
 root.geometry('400x400')
 
+# Cursor Info
+def show_cursor_info_bar():
+    show_cursor_info_checked = show_cursor_info.get()
+    if show_cursor_info_checked:
+        cursor_info_bar.pack(expand='no', fill=None, side='right', anchor='se')
+    else:
+        cursor_info_bar.pack_forget()
+
+def update_cursor_info_bar(event=None):
+    row, col = content_text.index('insert').split('.')
+    line_num, col_num = str(int(row)), str(int(col) + 1)
+    infotext = "Line: {0} | Column: {1}".format(line_num, col_num)
+    cursor_info_bar.config(text=infotext)
+
 # Line numbers
 def update_line_numbers(event=None):
     line_numbers = get_line_numbers()
@@ -38,6 +52,7 @@ def toggle_hightlight(event=None):
 
 def on_content_changed(event=None):
     update_line_numbers()
+    update_cursor_info_bar()
 
 def get_line_numbers():
     output = ''
@@ -240,7 +255,7 @@ view_menu.add_checkbutton(label='Show Line Number', variable=show_line_number)
 show_cursor_info = tk.IntVar()
 show_cursor_info.set(1)
 view_menu.add_checkbutton(label='Show Cursor Location at Bottom',
-                          variable=show_cursor_info)
+                          variable=show_cursor_info, command=show_cursor_info_bar)
 highlight_line = tk.IntVar()
 view_menu.add_checkbutton(label='Highlight Current Line', onvalue=1, offvalue=0,
                           variable=highlight_line)
@@ -297,6 +312,8 @@ content_text.configure(yscrollcommand=scroll_bar.set)
 scroll_bar.config(command=content_text.yview)
 scroll_bar.pack(side='right', fill='y')
 
+cursor_info_bar = tk.Label(content_text, text='Line: 1 | Column: 1')
+cursor_info_bar.pack(expand='no', fill=None, side='right', anchor='se')
 
 # binding issues
 content_text.bind('<KeyPress-F1>', display_help_messagebox)
